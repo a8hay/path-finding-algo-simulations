@@ -28,7 +28,7 @@ function draw() {
       GRID[row][col].show();
     }
   }
-  // draw the grid
+
   placeMarkers();
 }
 
@@ -36,6 +36,7 @@ function placeMarkers() {
   let posx = floor(map(mouseX, 0, width, 0, GRID[0].length));
   let posy = floor(map(mouseY, 0, height, 0, GRID.length));
   let markerType = cellType.value();
+
   if (posx >= 0 && posy >= 0 && posx < GRID[0].length && posy < GRID.length) {
     if (mouseIsPressed && markerType == "START") {
       GRID[startX][startY].isStart = false;
@@ -109,7 +110,6 @@ function create2dArray(m, n) {
 
 function applyAlgo() {
   algo = algoType.value();
-  console.log("applying", algo);
   if (algo == "BREADTH FIRST SEARCH!") {
     bfs();
   }
@@ -160,5 +160,25 @@ function addNeighbours() {
     ];
   }
   // add neighbours of four corner cells
+  let upper_left_corner = GRID[0][0];
+  upper_left_corner.neighbours = [GRID[0 + 1][0], GRID[0][0 + 1]];
+
+  let upper_right_corner = GRID[0][GRID[0].length - 1];
+  upper_right_corner.neighbours = [
+    GRID[0 + 1][GRID[0].length - 1],
+    GRID[0][GRID[0].length - 1 - 1]
+  ];
+
+  let lower_right_corner = GRID[GRID.length - 1][GRID[0].length - 1];
+  lower_right_corner.neighbours = [
+    GRID[GRID.length - 1 - 1][GRID[0].length - 1],
+    GRID[GRID.length - 1][GRID[0].length - 1 - 1]
+  ];
+
+  let lower_left_corner = GRID[GRID.length - 1][0];
+  lower_left_corner.neighbours = [
+    GRID[GRID.length - 1 - 1][0],
+    GRID[GRID.length - 1][0 + 1]
+  ];
 }
 // XXXXXXXXXXXXXXXX HELPER FUNCTIONS XXXXXXXXXXXXXXXXXX
