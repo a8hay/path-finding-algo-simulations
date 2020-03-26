@@ -75,19 +75,22 @@ function createHud() {
 
 function initialiseGrid() {
   GRID = create2dArray(floor(height / cellSize), floor(width / cellSize));
-  //   GRID = create2dArray(4, 6);
+
   for (let col = 0; col < GRID[0].length; col++) {
     for (let row = 0; row < GRID.length; row++) {
       let newCell = new Cell(col * cellSize, row * cellSize);
       GRID[row][col] = newCell;
     }
   }
+
   startX = 0;
   startY = 0;
   GRID[startX][startY].isStart = true;
   endX = GRID.length - 1;
   endY = GRID[0].length - 1;
   GRID[endX][endY].isEnd = true;
+
+  addNeighbours();
 }
 
 // XXXXXXXXXXXXXXXX HELPER FUNCTIONS XXXXXXXXXXXXXXXXXX
@@ -104,5 +107,58 @@ function create2dArray(m, n) {
   return resultArray;
 }
 
-function applyAlgo() {}
+function applyAlgo() {
+  algo = algoType.value();
+  console.log("applying", algo);
+  if (algo == "BREADTH FIRST SEARCH!") {
+    bfs();
+  }
+}
+
+function addNeighbours() {
+  // add only non diagonal elements
+  // add neighbours of non boundary cells
+  for (let row = 1; row < GRID.length - 1; row++) {
+    for (let col = 1; col < GRID[0].length - 1; col++) {
+      let current = GRID[row][col];
+      current.neighbours = [
+        GRID[row - 1][col],
+        GRID[row][col - 1],
+        GRID[row + 1][col],
+        GRID[row][col + 1]
+      ];
+    }
+  }
+  // add neighbours of upper and lower boundary cells
+  for (let col = 1; col < GRID[0].length - 1; col++) {
+    let upper_boundary = GRID[0][col];
+    upper_boundary.neighbours = [
+      GRID[0][col - 1],
+      GRID[0][col + 1],
+      GRID[1][col]
+    ];
+    let lower_boundary = GRID[GRID.length - 1][col];
+    lower_boundary.neighbours = [
+      GRID[GRID.length - 1][col - 1],
+      GRID[GRID.length - 1][col + 1],
+      GRID[GRID.length - 1 - 1][col]
+    ];
+  }
+  // add neighbours of left and right boundary cells
+  for (let row = 1; row < GRID.length - 1; row++) {
+    let left_boundary = GRID[row][0];
+    left_boundary.neighbours = [
+      GRID[row - 1][0],
+      GRID[row + 1][0],
+      GRID[row][1]
+    ];
+    let right_boundary = GRID[row][GRID[0].length - 1];
+    right_boundary.neighbours = [
+      GRID[row - 1][GRID[0].length - 1],
+      GRID[row + 1][GRID[0].length - 1],
+      GRID[row][GRID[0].length - 1 - 1]
+    ];
+  }
+  // add neighbours of four corner cells
+}
 // XXXXXXXXXXXXXXXX HELPER FUNCTIONS XXXXXXXXXXXXXXXXXX

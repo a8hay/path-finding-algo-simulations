@@ -5,6 +5,7 @@ class Cell {
     this.isStart = false;
     this.isEnd = false;
     this.isWall = false;
+    this.neighbours = [];
     this.clr = [255, 255, 255, 255];
   }
 
