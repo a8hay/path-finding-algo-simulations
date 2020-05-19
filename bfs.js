@@ -21,6 +21,7 @@ function bfs() {
           nebr.isDiscovered = true;
           nebr.parent = current;
           Q.push(nebr);
+          addVisualisationStep();
         }
       }
     }
@@ -32,9 +33,9 @@ function bfs() {
     if (!end.isStart) {
       end.isPath = true;
     }
+    addVisualisationStep();
     end = end.parent;
   }
-  //to keep the end node red
   endNode.isPath = false;
   endNode.isDiscovered = false;
 }
