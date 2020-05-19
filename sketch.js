@@ -14,6 +14,14 @@ let endX;
 let endY;
 // XXXXXXXXXXXXXXXXX SKETCH VARIABLES XXXXXXXXXXXXXXXXX
 
+// holds a grid per iteration step
+let algoVisSteps = [];
+// current iteration step counter
+let algoVisStep = 0;
+// display the visualisation or not
+let displayAlgoViz = false;
+// visualisation interval
+
 function setup() {
   createCanvas(1350, 630);
   initialiseGrid();
