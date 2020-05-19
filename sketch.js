@@ -13,7 +13,6 @@ let startY;
 let endX;
 let endY;
 // XXXXXXXXXXXXXXXXX SKETCH VARIABLES XXXXXXXXXXXXXXXXX
-
 // holds a grid per iteration step
 let algoVisSteps = [];
 // current iteration step counter
@@ -30,14 +29,29 @@ function setup() {
 
 function draw() {
   background(100);
+
+  if (displayAlgoViz) {
+    drawGrid(algoVisSteps[algoVisStep]);
+    // gotoNextFrame();
+    // console.log(algoVisStep);
+    // algoVisStep = (algoVisStep + 1) % algoVisSteps.length;
+    algoVisStep = algoVisStep + 1;
+    if (algoVisStep >= algoVisSteps.length) {
+      stopAlgoVisualisation();
+    }
+  } else {
+    drawGrid(GRID);
+    placeMarkers();
+  }
+}
+
+function drawGrid(GRID) {
   // draw the grid
   for (let row = 0; row < GRID.length; row++) {
     for (let col = 0; col < GRID[0].length; col++) {
       GRID[row][col].show();
     }
   }
-
-  placeMarkers();
 }
 
 function placeMarkers() {
@@ -83,6 +97,7 @@ function createHud() {
 }
 
 function initialiseGrid() {
+  resetVisualisation();
   GRID = create2dArray(floor(height / cellSize), floor(width / cellSize));
 
   for (let col = 0; col < GRID[0].length; col++) {
@@ -92,11 +107,12 @@ function initialiseGrid() {
     }
   }
 
-  startX = 0;
-  startY = 0;
+  // center element is start
+  startX = floor(GRID.length / 2);
+  startY = floor(GRID[0].length / 2);
   GRID[startX][startY].isStart = true;
-  endX = GRID.length - 1;
-  endY = GRID[0].length - 1;
+  endX = GRID.length - 13;
+  endY = GRID[0].length - 10;
   GRID[endX][endY].isEnd = true;
 
   addNeighbours();
@@ -118,11 +134,14 @@ function create2dArray(m, n) {
 
 function applyAlgo() {
   algo = algoType.value();
-  if (algo == "BREADTH FIRST SEARCH!") {
+  if (algo === "BREADTH FIRST SEARCH!") {
     bfs();
-  }
-  if (algo == "DEPTH FIRST SEARCH") {
+    startAlgoVisualisation();
+  } else if (algo === "DEPTH FIRST SEARCH") {
     dfs();
+    startAlgoVisualisation();
+  } else {
+    console.warn(algo, "not implemented yet!");
   }
 }
 
@@ -136,7 +155,7 @@ function addNeighbours() {
         GRID[row - 1][col],
         GRID[row][col - 1],
         GRID[row + 1][col],
-        GRID[row][col + 1]
+        GRID[row][col + 1],
       ];
     }
   }
@@ -146,13 +165,13 @@ function addNeighbours() {
     upper_boundary.neighbours = [
       GRID[0][col - 1],
       GRID[0][col + 1],
-      GRID[1][col]
+      GRID[1][col],
     ];
     let lower_boundary = GRID[GRID.length - 1][col];
     lower_boundary.neighbours = [
       GRID[GRID.length - 1][col - 1],
       GRID[GRID.length - 1][col + 1],
-      GRID[GRID.length - 1 - 1][col]
+      GRID[GRID.length - 1 - 1][col],
     ];
   }
   // add neighbours of left and right boundary cells
@@ -161,13 +180,13 @@ function addNeighbours() {
     left_boundary.neighbours = [
       GRID[row - 1][0],
       GRID[row + 1][0],
-      GRID[row][1]
+      GRID[row][1],
     ];
     let right_boundary = GRID[row][GRID[0].length - 1];
     right_boundary.neighbours = [
       GRID[row - 1][GRID[0].length - 1],
       GRID[row + 1][GRID[0].length - 1],
-      GRID[row][GRID[0].length - 1 - 1]
+      GRID[row][GRID[0].length - 1 - 1],
     ];
   }
   // add neighbours of four corner cells
@@ -177,19 +196,57 @@ function addNeighbours() {
   let upper_right_corner = GRID[0][GRID[0].length - 1];
   upper_right_corner.neighbours = [
     GRID[0 + 1][GRID[0].length - 1],
-    GRID[0][GRID[0].length - 1 - 1]
+    GRID[0][GRID[0].length - 1 - 1],
   ];
 
   let lower_right_corner = GRID[GRID.length - 1][GRID[0].length - 1];
   lower_right_corner.neighbours = [
     GRID[GRID.length - 1 - 1][GRID[0].length - 1],
-    GRID[GRID.length - 1][GRID[0].length - 1 - 1]
+    GRID[GRID.length - 1][GRID[0].length - 1 - 1],
   ];
 
   let lower_left_corner = GRID[GRID.length - 1][0];
   lower_left_corner.neighbours = [
     GRID[GRID.length - 1 - 1][0],
-    GRID[GRID.length - 1][0 + 1]
+    GRID[GRID.length - 1][0 + 1],
   ];
 }
 // XXXXXXXXXXXXXXXX HELPER FUNCTIONS XXXXXXXXXXXXXXXXXX
+function addVisualisationStep() {
+  //draw();
+  algoVisSteps.push(shallowCopyGrid(GRID));
+  // console.log("recorded", algoVisSteps.length, "frames");
+}
+
+function startAlgoVisualisation() {
+  displayAlgoViz = true;
+}
+
+function stopAlgoVisualisation() {
+  displayAlgoViz = false;
+}
+
+function resetVisualisation() {
+  stopAlgoVisualisation();
+  algoVisStep = 0;
+  while (algoVisSteps.length > 0) {
+    delete algoVisSteps[0];
+    algoVisSteps.shift();
+  }
+}
+
+function shallowCopyGrid(grid) {
+  let copy = [];
+
+  for (let i = 0; i < grid.length; i++) {
+    let list = [];
+
+    for (let j = 0; j < grid[i].length; j++) {
+      list.push(grid[i][j].shallowCopy());
+    }
+
+    copy.push(list);
+  }
+
+  return copy;
+}
