@@ -113,6 +113,9 @@ function applyAlgo() {
   if (algo == "BREADTH FIRST SEARCH!") {
     bfs();
   }
+  if (algo == "DEPTH FIRST SEARCH") {
+    dfs();
+  }
 }
 
 function addNeighbours() {
