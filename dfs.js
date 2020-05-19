@@ -21,6 +21,7 @@ function dfs() {
           nebr.isDiscovered = true;
           nebr.parent = current;
           stack.push(nebr);
+          addVisualisationStep();
         }
       }
     }
@@ -32,6 +33,7 @@ function dfs() {
     if (!end.isStart) {
       end.isPath = true;
     }
+    addVisualisationStep();
     end = end.parent;
   }
   // to keep the end node red
