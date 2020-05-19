@@ -34,4 +34,7 @@ function bfs() {
     }
     end = end.parent;
   }
+  //to keep the end node red
+  endNode.isPath = false;
+  endNode.isDiscovered = false;
 }
